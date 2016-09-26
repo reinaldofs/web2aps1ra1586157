@@ -1,6 +1,7 @@
 package br.edu.utfpr.web2;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,11 +31,16 @@ public class LoginServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Sessao sessao = new Sessao(request.getSession());
-		Retorno ret;
-		if (sessao.logar(request.getParameter("email"), request.getParameter("senha"))){
-			ret = new Retorno(1, "Logado com sucesso!");
-		}else{
-			ret = new Retorno(1, "Email ou senha incorretos!");
+		Retorno ret = null;
+		try {
+			if (sessao.logar(request.getParameter("email"), request.getParameter("senha"))){
+				ret = new Retorno(1, "Logado com sucesso!");
+			}else{
+				ret = new Retorno(1, "Email ou senha incorretos!");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		String json = new Gson().toJson(ret);
 		

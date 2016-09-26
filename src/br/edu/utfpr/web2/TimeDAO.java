@@ -9,9 +9,10 @@ import java.sql.SQLException;
 
 
 public class TimeDAO {
-	public Retorno save(Time model) throws IOException{
+	public Retorno save(Time model) throws IOException, SQLException{
+		Connection con = null;
 		try{
-			Connection con = Conexao.getConnection();
+			con = Conexao.getConnection();
 			String id = model.getIdTime() > 0 ? Integer.toString(model.getIdTime()):"null";
 			PreparedStatement ps = con.prepareStatement("INSERT OR REPLACE INTO time(idtime,nome,sigla) VALUES("+id+",?,?)");
 			
@@ -21,27 +22,33 @@ public class TimeDAO {
 			ps.execute();
 		}catch(SQLException se){
 			return new Retorno(-1, se.getMessage());
+		}finally{
+			con.close();
 		}
 		return new Retorno(1, "Gravado com sucesso!");
 	}
 	
-	public Retorno delete(Time model) throws IOException{
+	public Retorno delete(Time model) throws IOException, SQLException{
+		Connection con = null;
 		try{
-			Connection con = Conexao.getConnection();
+			con = Conexao.getConnection();
 			PreparedStatement ps = con.prepareStatement("DELETE FROM time WHERE idtime = ?");
 			ps.setInt(1, model.getIdTime());
 			ps.execute();
 		}catch(SQLException se){
 			return new Retorno(-1, se.getMessage());
+		}finally{
+			con.close();
 		}
 		return new Retorno(1, "Excluido com sucesso!");
 	}
 	
-	public ArrayList<Time> find(String query) throws IOException{
+	public ArrayList<Time> find(String query) throws IOException, SQLException{
 		
 		ArrayList<Time> ret = new ArrayList<Time>();
+		Connection con = null;
 		try{
-			Connection con = Conexao.getConnection();
+			con = Conexao.getConnection();
 			ResultSet rs = con.createStatement().executeQuery("SELECT * FROM time WHERE ''='"+query+"' or idtime=cast('"+query+"' as integer) or upper(nome) like '%"+query+"%' or upper(sigla) like '%"+query+"%' order by nome asc");
 			while (rs.next()) {
 				Time p = new Time();
@@ -53,6 +60,8 @@ public class TimeDAO {
 			}
 		}catch(SQLException se){
 			se.printStackTrace();
+		}finally{
+			con.close();
 		}
 		return ret;
 	}

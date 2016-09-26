@@ -9,9 +9,10 @@ import java.sql.SQLException;
 
 
 public class PessoaDAO {
-	public Retorno save(Pessoa model) throws IOException{
+	public Retorno save(Pessoa model) throws IOException, SQLException{
+		Connection con = null;
 		try{
-			Connection con = Conexao.getConnection();
+			con = Conexao.getConnection();
 			int idTime = 0;
 			String id = model.getIdPessoa() > 0 ? Integer.toString(model.getIdPessoa()):"null";
 			PreparedStatement ps = con.prepareStatement("INSERT OR REPLACE INTO pessoa(idpessoa,nome,cpf,email,telefone,endereco,cidade,cep,idtime,estado) VALUES("+id+",?,?,?,?,?,?,?,?,?)");
@@ -34,27 +35,35 @@ public class PessoaDAO {
 		}catch(SQLException se){
 			System.out.println(se.getMessage());
 			return new Retorno(-1, se.getMessage());
+		}finally{
+			con.close();
 		}
 		return new Retorno(1, "Gravado com sucesso!");
 	}
 	
-	public Retorno delete(Pessoa model) throws IOException{
+	public Retorno delete(Pessoa model) throws IOException, SQLException{
+		Connection con = null;
 		try{
-			Connection con = Conexao.getConnection();
+			con = Conexao.getConnection();
 			PreparedStatement ps = con.prepareStatement("DELETE FROM pessoa WHERE idpessoa = ?");
 			ps.setInt(1, model.getIdPessoa());
 			ps.execute();
 		}catch(SQLException se){
 			return new Retorno(-1, se.getMessage());
+		}finally{
+			if (con!=null){
+				con.close();
+			}
 		}
 		return new Retorno(1, "Excluido com sucesso!");
 	}
 	
-	public ArrayList<Pessoa> find(String query) throws IOException{
+	public ArrayList<Pessoa> find(String query) throws IOException, SQLException{
 		
 		ArrayList<Pessoa> ret = new ArrayList<Pessoa>();
+		Connection con = null;
 		try{
-			Connection con = Conexao.getConnection();
+			con = Conexao.getConnection();
 			ResultSet rs = con.createStatement().executeQuery("SELECT * FROM pessoa WHERE ''='"+query+"' or idpessoa=cast('"+query+"' as integer) or upper(nome) like '%"+query+"%' order by (idpessoa=cast('"+query+"' as integer))desc, nome asc ");
 			while (rs.next()) {
 				Pessoa p = new Pessoa();
@@ -78,6 +87,10 @@ public class PessoaDAO {
 			}
 		}catch(SQLException se){
 			se.printStackTrace();
+		}finally{
+			if (con!=null){
+				con.close();
+			}
 		}
 		return ret;
 	}

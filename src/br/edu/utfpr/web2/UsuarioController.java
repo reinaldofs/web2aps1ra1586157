@@ -1,6 +1,7 @@
 package br.edu.utfpr.web2;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class UsuarioController {
@@ -23,7 +24,7 @@ public class UsuarioController {
 		this.model = model;
 	}
 	
-	public Retorno delete() throws IOException{
+	public Retorno delete() throws IOException, SQLException{
 		return this.dao.delete(this.model);
 	}
 	
@@ -35,7 +36,7 @@ public class UsuarioController {
 		return this.dao.save(this.model);
 	}
 	
-	public ArrayList<Usuario> find(String query) throws IOException{
+	public ArrayList<Usuario> find(String query) throws IOException, SQLException{
 		return this.dao.find(query);
 	}
 }

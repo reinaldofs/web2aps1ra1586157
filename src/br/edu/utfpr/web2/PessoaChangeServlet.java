@@ -34,6 +34,7 @@ public class PessoaChangeServlet extends HttpServlet {
 		Time t = new Time();
 		Retorno ret;
 		try{
+			(new Sessao(request.getSession())).validarSessao();
 			System.out.println("Servlet -> Try");
 			p.setIdPessoa(Integer.parseInt(request.getParameter("idpessoa")));
 			p.setNome((String) request.getParameter("nome"));

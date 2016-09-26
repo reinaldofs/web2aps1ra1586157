@@ -32,6 +32,7 @@ public class TimeChangeServlet extends HttpServlet {
 		Time p = new Time();
 		Retorno ret;
 		try{
+			(new Sessao(request.getSession())).validarSessao();
 			p.setIdTime(Integer.parseInt(request.getParameter("idtime")));
 			p.setNome((String) request.getParameter("nome"));
 			p.setSigla((String) request.getParameter("sigla"));

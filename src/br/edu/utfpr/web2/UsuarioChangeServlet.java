@@ -33,6 +33,10 @@ public class UsuarioChangeServlet extends HttpServlet {
 		Retorno ret;
 		try{
 			p.setIdUsuario(Integer.parseInt(request.getParameter("idusuario")));
+			// valida a sessão para alteração de usuário
+			if (p.getIdUsuario()>0){
+				(new Sessao(request.getSession())).validarSessao();
+			}
 			p.setNome((String) request.getParameter("nome"));
 			p.setSenha((String) request.getParameter("senha"));
 			p.setEmail((String) request.getParameter("email"));

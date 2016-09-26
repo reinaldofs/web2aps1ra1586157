@@ -31,8 +31,10 @@ public class RelatorioTorcidaServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ArrayList<RelatorioTorcida> ret = new ArrayList<RelatorioTorcida>();
+		Connection con = null;
 		try{
-			Connection con = Conexao.getConnection();
+			(new Sessao(request.getSession())).validarSessao();
+			con = Conexao.getConnection();
 			ResultSet rs = con.createStatement().executeQuery("SELECT * FROM (SELECT t.nome time,t.sigla,(select count(1) from pessoa p where p.idtime=t.idtime) torcedores FROM time t) tmp where tmp.torcedores>0 ");
 			while (rs.next()) {
 				RelatorioTorcida p = new RelatorioTorcida();
@@ -43,6 +45,16 @@ public class RelatorioTorcidaServlet extends HttpServlet {
 			}
 		}catch(SQLException se){
 			se.printStackTrace();
+		} catch (ErroValidacao e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		String json = new Gson().toJson(ret);

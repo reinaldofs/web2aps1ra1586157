@@ -1,6 +1,7 @@
 package br.edu.utfpr.web2;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.http.HttpSession;
 
@@ -41,7 +42,7 @@ public class Sessao  {
 		session.setAttribute("msg", "Usuario desconectado!");
 	}
 	
-	public boolean logar(String email, String senha) throws IOException{
+	public boolean logar(String email, String senha) throws IOException, SQLException{
 		UsuarioDAO dao = new UsuarioDAO();
 		Usuario u = dao.getUsuario(email, senha);
 		
